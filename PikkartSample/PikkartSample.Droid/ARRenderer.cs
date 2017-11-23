@@ -12,6 +12,7 @@ using Android.Widget;
 using Javax.Microedition.Khronos.Opengles;
 using Com.Pikkart.AR.Recognition;
 using Javax.Microedition.Khronos.Egl;
+using System.Threading.Tasks;
 
 namespace PikkartSample.Droid
 {
@@ -32,10 +33,13 @@ namespace PikkartSample.Droid
         private Mesh monkeyMeshRed = null;
         private Mesh monkeyMeshGray = null;
 
+        ProgressDialog progressDialog;
+
         /* Constructor. */
         public ARRenderer(Context con)
         {
             context = con;
+            progressDialog = new ProgressDialog(con);
         }
 
         /** Called when the surface is created or recreated. 
@@ -44,18 +48,41 @@ namespace PikkartSample.Droid
         {
             gl.GlClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             //Here we create the 3D object and initialize textures, shaders, etc.
-            monkeyMesh = new Mesh();
-            monkeyMesh.InitMesh(context.Assets, "media/monkey.json", "media/texture.png");
-            monkeyMeshYellow = new Mesh();
-            monkeyMeshYellow.InitMesh(context.Assets, "media/monkey.json", "media/texture.png");
-            monkeyMeshBlue = new Mesh();
-            monkeyMeshBlue.InitMesh(context.Assets, "media/monkey.json", "media/texture2.png");
-            monkeyMeshRed = new Mesh();
-            monkeyMeshRed.InitMesh(context.Assets, "media/monkey.json", "media/texture3.png");
-            monkeyMeshGray = new Mesh();
-            monkeyMeshGray.InitMesh(context.Assets, "media/monkey.json", "media/texturegray.png");
-            monkeyMesh = monkeyMeshGray; // Initially we want to display the gray monkey
 
+            monkeyMesh = new Mesh();
+            monkeyMeshYellow = new Mesh();
+            monkeyMeshBlue = new Mesh();
+            monkeyMeshRed = new Mesh();
+            monkeyMeshGray = new Mesh();
+
+            Task.Run(async() =>
+            {
+                try
+                {
+                    ((Activity)context).RunOnUiThread(() =>
+                    {
+                        progressDialog = ProgressDialog.Show(context, "Loading textures", "The 3D template textures of this tutorial have not been loaded yet\n(this may take a while)", true);
+                    });
+                    monkeyMesh.InitMesh(context.Assets, "media/monkey.json", "media/texture.png");
+                    monkeyMeshYellow.InitMesh(context.Assets, "media/monkey.json", "media/texture.png");
+                    monkeyMeshBlue.InitMesh(context.Assets, "media/monkey.json", "media/texture2.png");
+                    monkeyMeshRed.InitMesh(context.Assets, "media/monkey.json", "media/texture3.png");
+                    monkeyMeshGray.InitMesh(context.Assets, "media/monkey.json", "media/texturegray.png");
+                    monkeyMesh = monkeyMeshGray; // Initially we want to display the gray monkey
+
+                    if (progressDialog != null)
+                        progressDialog.Dismiss();
+                    
+                }
+                catch (System.OperationCanceledException ex)
+                {
+                    Console.WriteLine("init failed: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            });
         }
 
         /** Called when the surface changed size. */
@@ -143,8 +170,15 @@ namespace PikkartSample.Droid
             if (computeModelViewProjectionMatrix(mvpMatrix))
             {
                 //draw our 3d mesh on top of the marker
-                monkeyMesh.DrawMesh(mvpMatrix);
-                RenderUtils.CheckGLError("completed Monkey head Render");
+                if (monkeyMesh != null && monkeyMesh.MeshLoaded)
+                {
+                    if (monkeyMesh.GLLoaded)
+                        monkeyMesh.DrawMesh(mvpMatrix);
+                    else
+                        monkeyMesh.InitMeshGL();
+
+                    RenderUtils.CheckGLError("completed Monkey head Render");
+                }
             }
 
             gl.GlFinish();

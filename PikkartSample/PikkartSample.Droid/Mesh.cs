@@ -1,5 +1,6 @@
 
 using Android.Content.Res;
+using Android.Graphics;
 using Android.Opengl;
 using Android.Util;
 using Java.IO;
@@ -18,6 +19,19 @@ namespace PikkartSample.Droid
          */
         public string Name() { return mName; }
 
+        private bool _meshLoaded = false;
+        public bool MeshLoaded
+        {
+            get { return _meshLoaded; }
+        }
+        private bool _glLoaded = false;
+        public bool GLLoaded
+        {
+            get { return _glLoaded; }
+        }
+
+        private ByteBuffer texture;
+        private int[] textureDims = new int[2];
 
         private ByteBuffer mVertices_Buffer; /**< vertices data */
         private ByteBuffer mTexCoords_Buffer; /**< texture coordinates data */
@@ -306,9 +320,19 @@ namespace PikkartSample.Droid
          */
         public bool InitMesh(AssetManager am, String mesh_file, String texture_file)
         {
+            _glLoaded = false;
             LoadMesh(am, mesh_file);
-            mTexture_GL_ID = RenderUtils.loadTextureFromApk(am, texture_file);
+            texture = RenderUtils.loadTexture(am, texture_file, textureDims);
+            _meshLoaded = true;
+
+            return true;
+        }
+
+        public bool InitMeshGL()
+        {
+            mTexture_GL_ID = RenderUtils.loadTextureFromByteBuffer(texture, textureDims[0], textureDims[1]);
             mProgram_GL_ID = RenderUtils.createProgramFromShaderSrc(MESH_VERTEX_SHADER, MESH_FRAGMENT_SHADER);
+            _glLoaded = true;
             return true;
         }
 

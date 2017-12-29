@@ -183,6 +183,52 @@ namespace PikkartSample.Droid
 
             }
         }
+
+        void IRecognitionListener.ARLogoFound(string p0, int p1)
+        {
+            // throw new NotImplementedException();
+        }
+
+        void IRecognitionListener.CloudMarkerNotFound()
+        {
+            // throw new NotImplementedException();
+        }
+
+        void IRecognitionListener.ExecutingCloudSearch()
+        {
+            // throw new NotImplementedException();
+        }
+
+        void IRecognitionListener.InternetConnectionNeeded()
+        {
+            // throw new NotImplementedException();
+        }
+
+        void IRecognitionListener.MarkerEngineToUpdate(string p0)
+        {
+            // throw new NotImplementedException();
+        }
+
+        void IRecognitionListener.MarkerFound(Marker p0)
+        {
+            // throw new NotImplementedException();
+        }
+
+        void IRecognitionListener.MarkerNotFound()
+        {
+            // throw new NotImplementedException();
+        }
+
+        void IRecognitionListener.MarkerTrackingLost(string p0)
+        {
+            // throw new NotImplementedException();
+        }
+
+        bool INetworkInfoProvider.IsConnectionAvailable(Context p0)
+        {
+            // throw new NotImplementedException();
+            return false;
+        }
     }
 }
 

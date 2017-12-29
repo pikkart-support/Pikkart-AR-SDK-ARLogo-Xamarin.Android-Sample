@@ -116,50 +116,9 @@ namespace PikkartSample.Droid
             }
         }
 
-        public void CloudMarkerNotFound()
+        void IRecognitionListener.ARLogoFound(string p0, int p1)
         {
-            //throw new NotImplementedException();
-        }
-
-        public void ExecutingCloudSearch()
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void InternetConnectionNeeded()
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void MarkerFound(Marker marker)
-        {
-            //throw new NotImplementedException();
-            Toast.MakeText(this, "PikkartAR: found marker " + marker.Id,
-                ToastLength.Short).Show();
-        }
-
-        public void MarkerNotFound()
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void MarkerTrackingLost(string p0)
-        {
-
-            m_arView.SelectMonkey(0);
-
-            Toast.MakeText(this, "PikkartAR: lost tracking of marker " + p0,
-
-                    ToastLength.Short).Show();
-        }
-
-        public bool IsConnectionAvailable(Context p0)
-        {
-            return false;
-        }
-
-        public void ARLogoFound(string p0, int p1)
-        {
+            // throw new NotImplementedException();
             switch (p1)
             {
 
@@ -184,11 +143,6 @@ namespace PikkartSample.Droid
             }
         }
 
-        void IRecognitionListener.ARLogoFound(string p0, int p1)
-        {
-            // throw new NotImplementedException();
-        }
-
         void IRecognitionListener.CloudMarkerNotFound()
         {
             // throw new NotImplementedException();
@@ -211,7 +165,8 @@ namespace PikkartSample.Droid
 
         void IRecognitionListener.MarkerFound(Marker p0)
         {
-            // throw new NotImplementedException();
+            Toast.MakeText(this, "PikkartAR: found marker " + p0.Id,
+                ToastLength.Short).Show();
         }
 
         void IRecognitionListener.MarkerNotFound()
@@ -222,6 +177,10 @@ namespace PikkartSample.Droid
         void IRecognitionListener.MarkerTrackingLost(string p0)
         {
             // throw new NotImplementedException();
+            m_arView.SelectMonkey(0);
+
+            Toast.MakeText(this, "PikkartAR: lost tracking of marker " + p0,
+                    ToastLength.Short).Show();
         }
 
         bool INetworkInfoProvider.IsConnectionAvailable(Context p0)
